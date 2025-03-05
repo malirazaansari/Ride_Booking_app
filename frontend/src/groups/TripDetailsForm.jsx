@@ -1,7 +1,8 @@
 import InputField from "../components/InputField";
 import AddressField from "../components/AddressField";
-
+import "react-phone-input-2/lib/style.css";
 import ProgressTracker from "../components/ProgressTracker";
+import PhoneNumberInput from "../components/PhoneNumberInput";
 const TripDetailsForm = () => {
   return (
     <div className="bg-white shadow-lg mx-auto p-6 pb-1 rounded-lg max-w-lg">
@@ -9,7 +10,7 @@ const TripDetailsForm = () => {
       <h2 className="mb-4 font-bold text-xl text-center">Your trip details</h2>
 
       <InputField label="Name" placeholder="Enter your name" />
-      <InputField label="Phone Number" type="tel" placeholder="+44 | Phone Number" />
+      <PhoneNumberInput label="Phone Number" />
       <InputField label="Email" type="email" placeholder="Enter your email" />
 
       <AddressField label="Pick up Address" />
