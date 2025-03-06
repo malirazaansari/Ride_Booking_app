@@ -49,7 +49,6 @@ const VehicleSelection = () => {
 />
 
 
-      {/* <button className="bg-blue-500 mb-3 px-4 py-2 rounded text-white">🔍 Filter</button> */}
       <div className="justify-center content-center gap-6 grid grid-cols-3">
         {vehicles.map((vehicle) => (
           <div

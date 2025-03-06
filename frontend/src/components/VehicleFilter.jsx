@@ -17,7 +17,6 @@ const VehicleFilter = ({ onApply }) => {
 
       {isOpen && (
         <div className="left-0 z-10 absolute bg-white shadow-lg mt-2 p-4 rounded w-48">
-          {/* Passengers Filter */}
           <div className="flex justify-between items-center">
             <button
               className="px-2 text-xl"
@@ -42,7 +41,6 @@ const VehicleFilter = ({ onApply }) => {
             </button>
           </div>
 
-          {/* Luggage Filter */}
           <div className="flex justify-between items-center mt-3">
             <button
               className="px-2 text-xl"
@@ -67,7 +65,6 @@ const VehicleFilter = ({ onApply }) => {
             </button>
           </div>
 
-          {/* Buttons */}
           <div className="flex justify-between mt-4">
             <button
               className="bg-gray-300 px-4 py-1 rounded text-black"

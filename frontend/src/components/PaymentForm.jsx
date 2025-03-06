@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { FaCreditCard } from "react-icons/fa";
-import InputField from "./InputField"; // Ensure correct path
+import InputField from "./InputField";
 
 const PaymentForm = () => {
   const [showCardModal, setShowCardModal] = useState(false);
@@ -13,7 +12,6 @@ const PaymentForm = () => {
     billingAddress: "",
   });
 
-  // Handle radio button change
   const handlePaymentChange = (e) => {
     const value = e.target.value;
     setPaymentMethod(value);
@@ -23,12 +21,10 @@ const PaymentForm = () => {
     }
   };
 
-  // Handle input field changes
   const handleInputChange = (field, value) => {
     setCardDetails((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Check if card details are filled completely
   const isCardDetailsComplete = () => {
     return (
       cardDetails.name.trim() &&
@@ -39,13 +35,11 @@ const PaymentForm = () => {
     );
   };
 
-  // Handle cancel (unchecks "Pay by Card")
   const handleCancel = () => {
-    setPaymentMethod(""); // Reset radio selection
+    setPaymentMethod(""); 
     setShowCardModal(false);
   };
 
-  // Handle Save
   const handleSave = () => {
     if (isCardDetailsComplete()) {
       setShowCardModal(false);
@@ -56,7 +50,6 @@ const PaymentForm = () => {
 
   return (
     <>
-      {/* Pay by Card (Radio Button) */}
       <label className="flex items-center cursor-pointer">
         <input
           type="radio"
@@ -69,7 +62,6 @@ const PaymentForm = () => {
         Pay by Card
       </label>
 
-      {/* Modal for Card Payment */}
       {showCardModal && (
         <div className="top-0 left-0 z-50 fixed flex justify-center items-center bg-gray-500/50 w-screen h-screen">
           <div className="bg-white shadow-lg p-6 rounded-lg w-full max-w-sm text-center">

@@ -10,9 +10,8 @@ const PhoneNumberInput = ({ label }) => {
     <div className="relative mb-4">
       {label && <label className="block mb-1 font-semibold text-sm">{label}</label>}
       <div className="relative flex items-center border border-gray-500 rounded-lg w-full">
-        {/* Country Code + Input in One Component */}
         <PhoneInput
-          country={"gb"} // Default country
+          country={"gb"}
           value={phone}
           onChange={setPhone}
           inputClass="!w-full !h-10 !pl-14 !border-none !bg-transparent !text-gray-800"
@@ -21,7 +20,6 @@ const PhoneNumberInput = ({ label }) => {
           dropdownClass="!z-50"
         />
 
-        {/* Clear Button */}
         {phone && (
           <button
             onClick={() => setPhone("")}
