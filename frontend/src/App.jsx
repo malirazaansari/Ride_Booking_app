@@ -8,7 +8,6 @@ const App = () => {
 
   return (
     <div className="relative flex h-screen">
-      {/* Left Section - Forms */}
       <div className={`bg-gray-100 p-4 transition-all duration-300 ${isVisible ? "w-1/2" : "w-full"} overflow-y-auto`}>
         <TripDetailsForm />
         <VehicleSelection />
