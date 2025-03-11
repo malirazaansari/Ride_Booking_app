@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Car, Bus } from "lucide-react";
-import { FaCarSide, FaShuttleVan, FaWheelchair, FaTaxi } from "react-icons/fa";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaCarSide, FaShuttleVan, FaWheelchair, FaTaxi, FaInfoCircle } from "react-icons/fa";
 import VehicleFilter from "../components/VehicleFilter";
 import PaymentForm from "../components/PaymentForm";
 
@@ -40,23 +39,20 @@ const VehicleSelection = () => {
       <h2 className="mb-3 font-semibold text-lg">Choose your vehicle</h2>
 
       <VehicleFilter
-  onApply={(passengers, luggage) => {
-    const filteredVehicles = vehicles.filter(
-      (v) => v.passengers >= passengers && v.luggage >= luggage
-    );
-    setFilteredVehicles(filteredVehicles);
-  }}
-/>
+        onApply={(passengers, luggage) => {
+          const updatedVehicles = vehicles.filter(
+            (v) => v.passengers >= passengers && v.luggage >= luggage
+          );
+          setFilteredVehicles(updatedVehicles);
+        }}
+      />
 
-
-      <div className="justify-center content-center gap-6 grid grid-cols-3">
-        {vehicles.map((vehicle) => (
+      <div className="justify-center content-center gap-6 grid grid-cols-3 mt-4">
+        {filteredVehicles.map((vehicle) => (
           <div
             key={vehicle.id}
             className={`border rounded-lg p-4 flex flex-col items-center cursor-pointer text-center w-40 shadow-md transition-all ${
-              selectedVehicle === vehicle.id
-                ? "bg-blue-500 text-white"
-                : "bg-white hover:bg-gray-100"
+              selectedVehicle === vehicle.id ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"
             }`}
             onClick={() => setSelectedVehicle(vehicle.id)}
           >
@@ -76,24 +72,22 @@ const VehicleSelection = () => {
             </button>
           </div>
         ))}
-
-        {modalVehicle && (
-          <div className="top-0 left-0 z-50 fixed flex justify-center items-center bg-gray-500/50 w-screen h-screen">
-            <div className="bg-white shadow-lg p-6 rounded-lg w-full max-w-sm text-center">
-              <h2 className="font-bold text-lg">{modalVehicle.name}</h2>
-              <p className="mt-2 text-sm">{modalVehicle.description}</p>
-              <button
-                className="bg-blue-500 hover:bg-blue-600 mt-4 px-6 py-2 rounded text-white"
-                onClick={() => setModalVehicle(null)}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        )}
       </div>
 
-
+      {modalVehicle && (
+        <div className="top-0 left-0 z-50 fixed flex justify-center items-center bg-gray-500/50 w-screen h-screen">
+          <div className="bg-white shadow-lg p-6 rounded-lg w-full max-w-sm text-center">
+            <h2 className="font-bold text-lg">{modalVehicle.name}</h2>
+            <p className="mt-2 text-sm">{modalVehicle.description}</p>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 mt-4 px-6 py-2 rounded text-white"
+              onClick={() => setModalVehicle(null)}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
 
       <h2 className="mt-5 font-semibold text-lg">Extras</h2>
       <div className="flex flex-col">
@@ -106,46 +100,36 @@ const VehicleSelection = () => {
           />
           Meet and Greet
         </label>
-        <label className="inline-flex items-center opacity-50 mt-2">
-          <input type="checkbox" className="mr-2" /> Wait and Return
+        <label className="inline-flex items-center mt-2">
+          <input
+            type="checkbox"
+            checked={extras.waitAndReturn}
+            onChange={() => setExtras({ ...extras, waitAndReturn: !extras.waitAndReturn })}
+            className="mr-2"
+          />
+          Wait and Return
         </label>
       </div>
 
       <h2 className="mt-5 font-semibold text-lg">Choose your payment method:</h2>
       <div className="flex flex-col space-y-2">
         <label className="flex items-center">
-          <input
-            type="radio"
-            name="payment"
-            value="cash"
-            checked={paymentMethod === "cash"}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="mr-2"
-          />
+          <input type="radio" name="payment" value="cash" checked={paymentMethod === "cash"} onChange={(e) => setPaymentMethod(e.target.value)} className="mr-2" />
           Pay by Cash
         </label>
 
         <PaymentForm />
+
         <label className="flex items-center">
-          <input
-            type="radio"
-            name="payment"
-            value="googlepay"
-            checked={paymentMethod === "googlepay"}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="mr-2"
-          />
+          <input type="radio" name="payment" value="googlepay" checked={paymentMethod === "googlepay"} onChange={(e) => setPaymentMethod(e.target.value)} className="mr-2" />
           <span className="flex items-center">
             <img src="g-pay.png" alt="Google Pay" className="mr-1 h-4" /> Google Pay
           </span>
         </label>
       </div>
 
-      <button className="bg-blue-500 mt-5 py-2 rounded-lg w-full font-semibold text-white text-lg">
-        Book Now
-      </button>
+      <button className="bg-blue-500 mt-5 py-2 rounded-lg w-full font-semibold text-white text-lg">Book Now</button>
     </div>
-  
   );
 };
 
