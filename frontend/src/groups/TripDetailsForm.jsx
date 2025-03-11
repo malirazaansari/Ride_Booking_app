@@ -5,7 +5,7 @@ import "react-phone-input-2/lib/style.css";
 import ProgressTracker from "../components/ProgressTracker";
 import PhoneNumberInput from "../components/PhoneNumberInput";
 
-const TripDetailsForm = () => {
+const TripDetailsForm = ({ onPlaceSelected }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedMinute, setSelectedMinute] = useState("");
@@ -45,8 +45,8 @@ const TripDetailsForm = () => {
       <PhoneNumberInput label="Phone Number" />
       <InputField label="Email" type="email" placeholder="Enter your email" />
 
-      <AddressField label="Pick up Address" />
-      <AddressField label="Drop Off Address" />
+      <AddressField label="Pick up Address" onPlaceSelected={(place, index) => onPlaceSelected(place, index === null ? "pickup" : "via", index)} />
+      <AddressField label="Drop Off Address" onPlaceSelected={(place) => onPlaceSelected(place, "dropoff")} />
 
       <div className="flex items-center gap-2 mt-4">
         <button className="bg-blue-500 px-4 py-2 rounded-lg text-white">Now</button>
