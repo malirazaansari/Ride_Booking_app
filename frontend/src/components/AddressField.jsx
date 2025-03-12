@@ -8,7 +8,6 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
   const autocompleteRef = useRef(null);
   const viaRefs = useRef([]);
 
-  // Add a new via address field
   const addViaField = (place = "") => {
     if (viaFields.length < 3) {
       setViaFields([...viaFields, place]);
@@ -16,13 +15,11 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
     }
   };
 
-  // Remove a via address field by index
   const removeViaField = (index) => {
     setViaFields(viaFields.filter((_, i) => i !== index));
     viaRefs.current.splice(index, 1);
   };
 
-  // Handle place selection
   const handlePlaceSelected = (autocomplete, index = null) => {
     const place = autocomplete.getPlace();
     if (index === null) {
@@ -85,7 +82,6 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
             }}
             className="p-2 border rounded-lg w-full"
           />
-          {/* Delete Button (Trash Icon) */}
           <button
             onClick={() => removeViaField(index)}
             className="text-red-500 hover:text-red-700"
@@ -95,7 +91,6 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
         </div>
       ))}
 
-      {/* Add Via Button (Appears only if less than 3 via fields) */}
       {label === "Pick up Address" && viaFields.length < 3 && (
         <button
           onClick={() => addViaField()}

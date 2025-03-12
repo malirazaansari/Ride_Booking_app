@@ -10,25 +10,22 @@ const TripDetailsForm = ({ onPlaceSelected, addViaPlace }) => {
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedMinute, setSelectedMinute] = useState("");
 
-  // Function to get the current date in YYYY-MM-DD format
   const getCurrentDate = () => {
     const today = new Date();
-    return today.toISOString().split("T")[0]; // Extract YYYY-MM-DD
+    return today.toISOString().split("T")[0];
   };
 
-  // Function to get the current hour and nearest 5-minute increment
   const getCurrentTime = () => {
     const now = new Date();
     const currentHour = now.getHours();
-    const currentMinutes = Math.ceil(now.getMinutes() / 5) * 5; // Round to nearest 5
+    const currentMinutes = Math.ceil(now.getMinutes() / 5) * 5; 
 
     return {
       hour: currentHour,
-      minute: currentMinutes >= 60 ? 0 : currentMinutes, // Reset to 0 if 60
+      minute: currentMinutes >= 60 ? 0 : currentMinutes, 
     };
   };
 
-  // Set initial values on mount
   useEffect(() => {
     setSelectedDate(getCurrentDate());
     const { hour, minute } = getCurrentTime();
@@ -52,7 +49,6 @@ const TripDetailsForm = ({ onPlaceSelected, addViaPlace }) => {
         <button className="bg-blue-500 px-4 py-2 rounded-lg text-white">Now</button>
         <button className="bg-gray-200 px-4 py-2 rounded-lg text-black">Later</button>
 
-        {/* Date Picker */}
         <input
           type="date"
           className="p-2 border rounded-lg"
@@ -60,7 +56,6 @@ const TripDetailsForm = ({ onPlaceSelected, addViaPlace }) => {
           onChange={(e) => setSelectedDate(e.target.value)}
         />
 
-        {/* Hour Selector */}
         <select
           className="p-2 border rounded-lg"
           value={selectedHour}
@@ -73,7 +68,6 @@ const TripDetailsForm = ({ onPlaceSelected, addViaPlace }) => {
 
         <p className="text-gray-800">:</p>
 
-        {/* Minute Selector */}
         <select
           className="p-2 border rounded-lg"
           value={selectedMinute}
