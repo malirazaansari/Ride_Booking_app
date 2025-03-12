@@ -9,6 +9,7 @@ const App = () => {
   const [pickupPlace, setPickupPlace] = useState(null);
   const [dropoffPlace, setDropoffPlace] = useState(null);
   const [viaPlaces, setViaPlaces] = useState([]);
+  const [addViaPlace, setAddViaPlace] = useState(null);
 
   const handlePlaceSelected = (place, type, index = null) => {
     if (type === "pickup") {
@@ -24,12 +25,20 @@ const App = () => {
     }
   };
 
+  const handleWaitAndReturnConfirmed = () => {
+    if (pickupPlace && dropoffPlace) {
+      setAddViaPlace(dropoffPlace);
+      setDropoffPlace(pickupPlace);
+      setPickupPlace(dropoffPlace);
+    }
+  };
+
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
       <div className="relative flex h-screen">
         <div className={`bg-gray-100 p-4 transition-all duration-300 ${isVisible ? "w-1/2" : "w-full"} overflow-y-auto`}>
-          <TripDetailsForm onPlaceSelected={handlePlaceSelected} />
-          <VehicleSelection />
+          <TripDetailsForm onPlaceSelected={handlePlaceSelected} addViaPlace={addViaPlace} />
+          <VehicleSelection onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed} />
         </div>
 
         <button

@@ -1,17 +1,17 @@
-import React,{ useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Trash2 } from "lucide-react"; // Import trash icon
 import InputField from "./InputField";
 
-const AddressField = ({ label, onPlaceSelected }) => {
+const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
   const [value, setValue] = useState("");
   const [viaFields, setViaFields] = useState([]);
   const autocompleteRef = useRef(null);
   const viaRefs = useRef([]);
 
   // Add a new via address field
-  const addViaField = () => {
+  const addViaField = (place = "") => {
     if (viaFields.length < 3) {
-      setViaFields([...viaFields, ""]);
+      setViaFields([...viaFields, place]);
       viaRefs.current.push(React.createRef());
     }
   };
@@ -49,6 +49,12 @@ const AddressField = ({ label, onPlaceSelected }) => {
       }
     });
   }, [viaFields]);
+
+  useEffect(() => {
+    if (addViaPlace) {
+      addViaField(addViaPlace.formatted_address);
+    }
+  }, [addViaPlace]);
 
   return (
     <div className="mb-4 p-4 border rounded-lg">
@@ -92,7 +98,7 @@ const AddressField = ({ label, onPlaceSelected }) => {
       {/* Add Via Button (Appears only if less than 3 via fields) */}
       {label === "Pick up Address" && viaFields.length < 3 && (
         <button
-          onClick={addViaField}
+          onClick={() => addViaField()}
           className="flex items-center gap-2 bg-blue-500 mt-2 px-3 py-2 rounded-lg text-white"
         >
           Add Via <span className="text-lg">+</span>

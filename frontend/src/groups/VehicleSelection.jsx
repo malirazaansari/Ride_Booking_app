@@ -24,7 +24,7 @@ const vehicles = [
   { id: 7, name: "Wheelchair Accessible Cars", passengers: 5, luggage: 0, price: 132, eta: "11:41", description: "Car equipped for wheelchair access." },
 ];
 
-const VehicleSelection = () => {
+const VehicleSelection = ({ onWaitAndReturnConfirmed }) => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [modalVehicle, setModalVehicle] = useState(null);
   const [extras, setExtras] = useState({
@@ -33,6 +33,21 @@ const VehicleSelection = () => {
   });
   const [filteredVehicles, setFilteredVehicles] = useState(vehicles);
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [showWaitAndReturnModal, setShowWaitAndReturnModal] = useState(false);
+
+  const handleWaitAndReturnChange = () => {
+    setExtras({ ...extras, waitAndReturn: !extras.waitAndReturn });
+    setShowWaitAndReturnModal(!extras.waitAndReturn);
+  };
+
+  const handleWaitAndReturnConfirm = (confirm) => {
+    setShowWaitAndReturnModal(false);
+    if (confirm) {
+      onWaitAndReturnConfirmed();
+    } else {
+      setExtras({ ...extras, waitAndReturn: false });
+    }
+  };
 
   return (
     <div className="bg-white shadow-lg mx-auto p-6 pt-1 rounded-lg max-w-lg">
@@ -104,12 +119,44 @@ const VehicleSelection = () => {
           <input
             type="checkbox"
             checked={extras.waitAndReturn}
-            onChange={() => setExtras({ ...extras, waitAndReturn: !extras.waitAndReturn })}
+            onChange={handleWaitAndReturnChange}
             className="mr-2"
           />
           Wait and Return
         </label>
       </div>
+
+      {showWaitAndReturnModal && (
+        <div className="top-0 left-0 z-50 fixed flex justify-center items-center bg-gray-500/50 w-screen h-screen">
+          <div className="bg-white shadow-lg p-6 rounded-lg w-full max-w-sm text-center">
+            <h2 className="font-bold text-lg">Wait and Return</h2>
+            <p className="mt-2 text-sm">
+              This option will select your pickup place as the drop-off place too, and will visit the first selected drop-off place.
+              <br /><br />
+              Instructions:
+              <ul className="text-left list-disc list-inside">
+                <li>Your pickup address will be set as the drop-off address.</li>
+                <li>The first selected drop-off address will be added as a via address.</li>
+                <li>The map and address fields will be updated accordingly.</li>
+              </ul>
+            </p>
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                className="bg-red-500 hover:bg-red-600 px-6 py-2 rounded text-white"
+                onClick={() => handleWaitAndReturnConfirm(false)}
+              >
+                No
+              </button>
+              <button
+                className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
+                onClick={() => handleWaitAndReturnConfirm(true)}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <h2 className="mt-5 font-semibold text-lg">Choose your payment method:</h2>
       <div className="flex flex-col space-y-2">
