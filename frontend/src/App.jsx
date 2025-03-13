@@ -44,6 +44,7 @@ const App = () => {
   const handleWaitAndReturnConfirmed = () => {
     if (pickupPlace && dropoffPlace) {
       setViaPlaces([dropoffPlace]);
+      setAddViaPlace(dropoffPlace);
       setDropoffPlace(pickupPlace);
       setIsWaitAndReturn(true);
     }
@@ -53,7 +54,7 @@ const App = () => {
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
       <div className="relative flex h-screen">
         <div className={`bg-gray-100 p-4 transition-all duration-300 ${isVisible ? "w-1/2" : "w-full"} overflow-y-auto`}>
-          <TripDetailsForm onPlaceSelected={handlePlaceSelected} addViaPlace={addViaPlace} />
+          <TripDetailsForm onPlaceSelected={handlePlaceSelected} addViaPlace={addViaPlace} isWaitAndReturn={isWaitAndReturn} />
           <VehicleSelection onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed} isWaitAndReturnDisabled={isWaitAndReturnDisabled} />
         </div>
 

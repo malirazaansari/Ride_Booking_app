@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Trash2 } from "lucide-react"; // Import trash icon
 import InputField from "./InputField";
 
-const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
+const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pickupAddress }) => {
   const [value, setValue] = useState("");
   const [viaFields, setViaFields] = useState([]);
   const autocompleteRef = useRef(null);
@@ -22,27 +22,33 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
 
   const handlePlaceSelected = (autocomplete, index = null) => {
     const place = autocomplete.getPlace();
+    if (!place || !place.formatted_address) return;
+
     if (index === null) {
       setValue(place.formatted_address);
     } else {
-      const updatedFields = [...viaFields];
-      updatedFields[index] = place.formatted_address;
-      setViaFields(updatedFields);
+      setViaFields((prev) => prev.map((val, i) => (i === index ? place.formatted_address : val)));
     }
+
     if (onPlaceSelected) {
       onPlaceSelected(place, index);
     }
   };
 
   useEffect(() => {
-    if (autocompleteRef.current) {
+    if (autocompleteRef.current && !autocompleteRef.current.autocomplete) {
       const autocomplete = new window.google.maps.places.Autocomplete(autocompleteRef.current);
       autocomplete.addListener("place_changed", () => handlePlaceSelected(autocomplete));
+      autocompleteRef.current.autocomplete = autocomplete;
     }
+  }, []);
+
+  useEffect(() => {
     viaRefs.current.forEach((ref, index) => {
-      if (ref.current) {
+      if (ref && ref.current && !ref.current.autocomplete) {
         const autocomplete = new window.google.maps.places.Autocomplete(ref.current);
         autocomplete.addListener("place_changed", () => handlePlaceSelected(autocomplete, index));
+        ref.current.autocomplete = autocomplete;
       }
     });
   }, [viaFields]);
@@ -53,8 +59,15 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
     }
   }, [addViaPlace]);
 
+  // ✅ Show Pickup Address in Drop Off Field when "Wait & Return" is enabled
+  useEffect(() => {
+    if (isWaitAndReturn && label === "Drop Off Address") {
+      setValue(pickupAddress || "");
+    }
+  }, [isWaitAndReturn, label, pickupAddress]);
+
   return (
-    <div className="mb-4 p-4 border rounded-lg">
+    <div className="mb-4 p-4 border border-gray-600 rounded-lg">
       <label className="block mb-1 font-semibold text-sm">{label}</label>
 
       {/* Main Address Field with Autocomplete */}
@@ -64,12 +77,13 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
         placeholder="Search for Address..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="p-2 border rounded-lg w-full"
+        className="p-2 border border-gray-500 rounded-lg w-full"
+        readOnly={isWaitAndReturn && label === "Drop Off Address"}
       />
 
       {/* Via Address Fields with Delete Button */}
       {viaFields.map((_, index) => (
-        <div key={index} className="flex items-center gap-2">
+        <div key={index} className="flex items-center gap-2 mt-2">
           <input
             ref={viaRefs.current[index]}
             type="text"
@@ -80,7 +94,7 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
               updatedFields[index] = e.target.value;
               setViaFields(updatedFields);
             }}
-            className="p-2 border rounded-lg w-full"
+            className="p-2 border border-gray-300 rounded-lg w-full"
           />
           <button
             onClick={() => removeViaField(index)}
@@ -91,6 +105,7 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace }) => {
         </div>
       ))}
 
+      {/* Add Via Button */}
       {label === "Pick up Address" && viaFields.length < 3 && (
         <button
           onClick={() => addViaField()}
