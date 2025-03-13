@@ -124,7 +124,9 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled })
             className="mr-2"
             disabled={isWaitAndReturnDisabled}
           />
-          Wait and Return
+          <span className={isWaitAndReturnDisabled ? "text-gray-400" : "text-black"}>
+            Wait and Return
+          </span>
           <button
             className="ml-2 text-gray-500 hover:text-gray-700"
             onClick={(e) => {

@@ -11,6 +11,7 @@ const App = () => {
   const [viaPlaces, setViaPlaces] = useState([]);
   const [addViaPlace, setAddViaPlace] = useState(null);
   const [isWaitAndReturnDisabled, setIsWaitAndReturnDisabled] = useState(true);
+  const [isWaitAndReturn, setIsWaitAndReturn] = useState(false);
 
   const handlePlaceSelected = (place, type, index = null) => {
     if (type === "pickup") {
@@ -33,18 +34,18 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (pickupPlace && dropoffPlace) {
+    if (pickupPlace && dropoffPlace && viaPlaces.length === 0) {
       setIsWaitAndReturnDisabled(false);
     } else {
       setIsWaitAndReturnDisabled(true);
     }
-  }, [pickupPlace, dropoffPlace]);
+  }, [pickupPlace, dropoffPlace, viaPlaces]);
 
   const handleWaitAndReturnConfirmed = () => {
     if (pickupPlace && dropoffPlace) {
-      setAddViaPlace(dropoffPlace);
+      setViaPlaces([dropoffPlace]);
       setDropoffPlace(pickupPlace);
-      setPickupPlace(dropoffPlace);
+      setIsWaitAndReturn(true);
     }
   };
 
@@ -63,7 +64,7 @@ const App = () => {
           {isVisible ? "Hide Map" : "Show Map"}
         </button>
 
-        <GoogleMapComponent isVisible={isVisible} pickupPlace={pickupPlace} dropoffPlace={dropoffPlace} viaPlaces={viaPlaces} />
+        <GoogleMapComponent isVisible={isVisible} pickupPlace={pickupPlace} dropoffPlace={dropoffPlace} viaPlaces={viaPlaces} isWaitAndReturn={isWaitAndReturn} />
       </div>
     </LoadScript>
   );

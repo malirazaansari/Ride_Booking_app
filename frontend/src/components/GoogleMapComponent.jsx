@@ -6,7 +6,7 @@ const defaultCenter = {
   lng: -0.118092,
 };
 
-const GoogleMapComponent = ({ isVisible, pickupPlace, dropoffPlace, viaPlaces }) => {
+const GoogleMapComponent = ({ isVisible, pickupPlace, dropoffPlace, viaPlaces, isWaitAndReturn }) => {
   const [directions, setDirections] = useState(null);
 
   useEffect(() => {
@@ -20,8 +20,8 @@ const GoogleMapComponent = ({ isVisible, pickupPlace, dropoffPlace, viaPlaces })
       directionsService.route(
         {
           origin: { lat: pickupPlace.geometry.location.lat(), lng: pickupPlace.geometry.location.lng() },
-          destination: { lat: dropoffPlace.geometry.location.lat(), lng: dropoffPlace.geometry.location.lng() },
-          waypoints: waypoints,
+          destination: isWaitAndReturn ? { lat: pickupPlace.geometry.location.lat(), lng: pickupPlace.geometry.location.lng() } : { lat: dropoffPlace.geometry.location.lat(), lng: dropoffPlace.geometry.location.lng() },
+          waypoints: isWaitAndReturn ? [{ location: { lat: dropoffPlace.geometry.location.lat(), lng: dropoffPlace.geometry.location.lng() }, stopover: true }, ...waypoints] : waypoints,
           travelMode: window.google.maps.TravelMode.DRIVING,
         },
         (result, status) => {
@@ -33,7 +33,7 @@ const GoogleMapComponent = ({ isVisible, pickupPlace, dropoffPlace, viaPlaces })
         }
       );
     }
-  }, [pickupPlace, dropoffPlace, viaPlaces]);
+  }, [pickupPlace, dropoffPlace, viaPlaces, isWaitAndReturn]);
 
   return (
     <div className={`fixed top-0 right-0 h-screen w-1/2 bg-white shadow-lg transition-transform duration-300 ${isVisible ? "translate-x-0" : "translate-x-full"}`}>
