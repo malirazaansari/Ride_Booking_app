@@ -34,6 +34,7 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed }) => {
   const [filteredVehicles, setFilteredVehicles] = useState(vehicles);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [showWaitAndReturnModal, setShowWaitAndReturnModal] = useState(false);
+  const [showWaitAndReturnInfoModal, setShowWaitAndReturnInfoModal] = useState(false);
 
   const handleWaitAndReturnChange = () => {
     setExtras({ ...extras, waitAndReturn: !extras.waitAndReturn });
@@ -123,8 +124,36 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed }) => {
             className="mr-2"
           />
           Wait and Return
+          <button
+            className="ml-2 text-gray-500 hover:text-gray-700"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowWaitAndReturnInfoModal(true);
+            }}
+          >
+            <FaInfoCircle size={20} />
+          </button>
         </label>
       </div>
+
+      {showWaitAndReturnInfoModal && (
+        <div className="top-0 left-0 z-50 fixed flex justify-center items-center bg-gray-500/50 w-screen h-screen">
+          <div className="bg-white shadow-lg p-6 rounded-lg w-full max-w-sm text-center">
+            <h2 className="font-bold text-lg">Wait and Return</h2>
+            <p className="mt-2 text-sm">
+              Choose this option for the best price if you want the driver to wait for you at your destination and take you back to the same place where you were picked up from (waiting charges may apply).
+              <br /><br />
+              This option will automatically use your pick up address as your final destination.
+            </p>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 mt-4 px-6 py-2 rounded text-white"
+              onClick={() => setShowWaitAndReturnInfoModal(false)}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
 
       {showWaitAndReturnModal && (
         <div className="top-0 left-0 z-50 fixed flex justify-center items-center bg-gray-500/50 w-screen h-screen">
