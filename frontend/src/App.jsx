@@ -45,7 +45,13 @@ const App = () => {
     if (pickupPlace && dropoffPlace) {
       setViaPlaces([dropoffPlace]);
       setAddViaPlace(dropoffPlace);
-      setDropoffPlace(pickupPlace);
+      
+      setDropoffPlace((prevDropoff) => {
+        console.log("Previous Dropoff:", prevDropoff);
+        console.log("Setting Dropoff to:", pickupPlace);
+        return pickupPlace; // Ensures pickupPlace is used correctly
+      });
+  
       setIsWaitAndReturn(true);
     }
   };
@@ -54,7 +60,14 @@ const App = () => {
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
       <div className="relative flex h-screen">
         <div className={`bg-gray-100 p-4 transition-all duration-300 ${isVisible ? "w-1/2" : "w-full"} overflow-y-auto`}>
-          <TripDetailsForm onPlaceSelected={handlePlaceSelected} addViaPlace={addViaPlace} isWaitAndReturn={isWaitAndReturn} />
+          <TripDetailsForm
+            onPlaceSelected={handlePlaceSelected}
+            addViaPlace={addViaPlace}
+            isWaitAndReturn={isWaitAndReturn}
+            pickupPlace={pickupPlace} // Pass pickupPlace here
+            dropoffPlace={dropoffPlace} // (optional) Pass dropoffPlace if needed
+            viaPlaces={viaPlaces}
+          />
           <VehicleSelection onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed} isWaitAndReturnDisabled={isWaitAndReturnDisabled} />
         </div>
 

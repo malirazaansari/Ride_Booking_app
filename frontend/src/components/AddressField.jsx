@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Trash2 } from "lucide-react"; // Import trash icon
 import InputField from "./InputField";
 
-const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pickupAddress }) => {
+const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pickupPlace }) => {
   const [value, setValue] = useState("");
   const [viaFields, setViaFields] = useState([]);
   const autocompleteRef = useRef(null);
@@ -62,9 +62,10 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pi
   // ✅ Show Pickup Address in Drop Off Field when "Wait & Return" is enabled
   useEffect(() => {
     if (isWaitAndReturn && label === "Drop Off Address") {
-      setValue(pickupAddress || "");
+      console.log("Pickup Place:", pickupPlace);
+      setValue(pickupPlace?.formatted_address || "");  // ✅ Use pickupPlace instead of dropoffPlace
     }
-  }, [isWaitAndReturn, label, pickupAddress]);
+  }, [isWaitAndReturn, label, pickupPlace]);
 
   return (
     <div className="mb-4 p-4 border border-gray-600 rounded-lg">
@@ -94,7 +95,7 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pi
               updatedFields[index] = e.target.value;
               setViaFields(updatedFields);
             }}
-            className="p-2 border border-gray-300 rounded-lg w-full"
+            className="p-2 border border-gray-500 rounded-lg w-full"
           />
           <button
             onClick={() => removeViaField(index)}
