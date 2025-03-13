@@ -24,7 +24,7 @@ const vehicles = [
   { id: 7, name: "Wheelchair Accessible Cars", passengers: 5, luggage: 0, price: 132, eta: "11:41", description: "Car equipped for wheelchair access." },
 ];
 
-const VehicleSelection = ({ onWaitAndReturnConfirmed }) => {
+const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled }) => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [modalVehicle, setModalVehicle] = useState(null);
   const [extras, setExtras] = useState({
@@ -122,6 +122,7 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed }) => {
             checked={extras.waitAndReturn}
             onChange={handleWaitAndReturnChange}
             className="mr-2"
+            disabled={isWaitAndReturnDisabled}
           />
           Wait and Return
           <button

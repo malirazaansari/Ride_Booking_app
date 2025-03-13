@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TripDetailsForm from "./groups/TripDetailsForm";
 import VehicleSelection from "./groups/VehicleSelection";
 import GoogleMapComponent from "./components/GoogleMapComponent";
@@ -10,6 +10,7 @@ const App = () => {
   const [dropoffPlace, setDropoffPlace] = useState(null);
   const [viaPlaces, setViaPlaces] = useState([]);
   const [addViaPlace, setAddViaPlace] = useState(null);
+  const [isWaitAndReturnDisabled, setIsWaitAndReturnDisabled] = useState(true);
 
   const handlePlaceSelected = (place, type, index = null) => {
     if (type === "pickup") {
@@ -23,7 +24,21 @@ const App = () => {
       }
       setViaPlaces(updatedViaPlaces);
     }
+
+    if (pickupPlace && dropoffPlace) {
+      setIsWaitAndReturnDisabled(false);
+    } else {
+      setIsWaitAndReturnDisabled(true);
+    }
   };
+
+  useEffect(() => {
+    if (pickupPlace && dropoffPlace) {
+      setIsWaitAndReturnDisabled(false);
+    } else {
+      setIsWaitAndReturnDisabled(true);
+    }
+  }, [pickupPlace, dropoffPlace]);
 
   const handleWaitAndReturnConfirmed = () => {
     if (pickupPlace && dropoffPlace) {
@@ -38,7 +53,7 @@ const App = () => {
       <div className="relative flex h-screen">
         <div className={`bg-gray-100 p-4 transition-all duration-300 ${isVisible ? "w-1/2" : "w-full"} overflow-y-auto`}>
           <TripDetailsForm onPlaceSelected={handlePlaceSelected} addViaPlace={addViaPlace} />
-          <VehicleSelection onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed} />
+          <VehicleSelection onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed} isWaitAndReturnDisabled={isWaitAndReturnDisabled} />
         </div>
 
         <button
