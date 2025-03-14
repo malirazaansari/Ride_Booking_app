@@ -49,7 +49,7 @@ const App = () => {
       setDropoffPlace((prevDropoff) => {
         console.log("Previous Dropoff:", prevDropoff);
         console.log("Setting Dropoff to:", pickupPlace);
-        return pickupPlace; // Ensures pickupPlace is used correctly
+        return pickupPlace;
       });
   
       setIsWaitAndReturn(true);
@@ -64,8 +64,8 @@ const App = () => {
             onPlaceSelected={handlePlaceSelected}
             addViaPlace={addViaPlace}
             isWaitAndReturn={isWaitAndReturn}
-            pickupPlace={pickupPlace} // Pass pickupPlace here
-            dropoffPlace={dropoffPlace} // (optional) Pass dropoffPlace if needed
+            pickupPlace={pickupPlace} 
+            dropoffPlace={dropoffPlace}
             viaPlaces={viaPlaces}
           />
           <VehicleSelection onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed} isWaitAndReturnDisabled={isWaitAndReturnDisabled} />

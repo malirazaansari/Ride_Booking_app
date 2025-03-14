@@ -39,8 +39,7 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
     const selectedDateTime = new Date(selectedDate);
     selectedDateTime.setHours(selectedHour, selectedMinute);
 
-    // Check if the selected time is more than 1 hour ahead
-    const timeDifference = (selectedDateTime - now) / (1000 * 60); // Convert to minutes
+    const timeDifference = (selectedDateTime - now) / (1000 * 60); 
     setIsLaterSelected(timeDifference > 60);
   }, [selectedDate, selectedHour, selectedMinute]);
 
@@ -59,14 +58,14 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
         onPlaceSelected={(place, index) => onPlaceSelected(place, index === null ? "pickup" : "via", index)}
         addViaPlace={addViaPlace}
         isWaitAndReturn={isWaitAndReturn}
-        pickupPlace={pickupPlace} // Pass pickupPlace here
+        pickupPlace={pickupPlace}
       />
       <AddressField
         label="Drop Off Address"
         value={pickupPlace}
         onPlaceSelected={(place) => onPlaceSelected(place, "dropoff")}
         isWaitAndReturn={isWaitAndReturn}
-        pickupPlace={pickupPlace} // Pass pickupPlace here
+        pickupPlace={pickupPlace}
       />
 
       <div className="flex items-center gap-2 mt-4">

@@ -59,11 +59,10 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pi
     }
   }, [addViaPlace]);
 
-  // ✅ Show Pickup Address in Drop Off Field when "Wait & Return" is enabled
   useEffect(() => {
     if (isWaitAndReturn && label === "Drop Off Address") {
       console.log("Pickup Place:", pickupPlace);
-      setValue(pickupPlace?.formatted_address || "");  // ✅ Use pickupPlace instead of dropoffPlace
+      setValue(pickupPlace?.formatted_address || "");  
     }
   }, [isWaitAndReturn, label, pickupPlace]);
 
@@ -71,7 +70,6 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pi
     <div className="mb-4 p-4 border border-gray-600 rounded-lg">
       <label className="block mb-1 font-semibold text-sm">{label}</label>
 
-      {/* Main Address Field with Autocomplete */}
       <input
         ref={autocompleteRef}
         type="text"
@@ -82,7 +80,6 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pi
         readOnly={isWaitAndReturn && label === "Drop Off Address"}
       />
 
-      {/* Via Address Fields with Delete Button */}
       {viaFields.map((_, index) => (
         <div key={index} className="flex items-center gap-2 mt-2">
           <input
@@ -106,7 +103,6 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pi
         </div>
       ))}
 
-      {/* Add Via Button */}
       {label === "Pick up Address" && viaFields.length < 3 && (
         <button
           onClick={() => addViaField()}
