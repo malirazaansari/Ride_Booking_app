@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Trash2 } from "lucide-react"; // Import trash icon
+import { Trash2 } from "lucide-react"; 
 import InputField from "./InputField";
 
 const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pickupPlace }) => {
