@@ -26,6 +26,7 @@ const PaymentForm = () => {
   };
 
   const isCardDetailsComplete = () => {
+    console.log(cardDetails); 
     return (
       cardDetails.name.trim() &&
       cardDetails.cardNumber.trim() &&

@@ -23,7 +23,7 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
   });
 
   const calculateDynamicPrice = (basePrice, distance) => {
-    if (!distance || isNaN(distance)) {
+    if (distance === undefined || distance === null || isNaN(distance)) {
       console.error("Invalid distance value:", distance);
       return basePrice;
     }
@@ -37,11 +37,6 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
   const [paymentMethod, setPaymentMethod] = useState("cash");
 
   useEffect(() => {
-    if (!distance || distance <= 0) {
-      setVehicles([]);
-      return;
-    }
-
     const newVehicles = [
       { id: 1, name: "Any Car", passengers: 4, luggage: 2, price: calculateDynamicPrice(1, distance), eta: "11:41", description: "A standard car suitable for up to 4 passengers and 2 luggage." },
       { id: 2, name: "Saloon Car", passengers: 4, luggage: 2, price: calculateDynamicPrice(1, distance), eta: "11:41", description: "Accommodates up to 4 passengers with space for 2 suitcases and 2 hand luggage items." },
@@ -53,7 +48,7 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
     ];
 
     setVehicles(newVehicles);
-  }, [distance]);
+  }, [distance]); // Always update vehicles when distance changes
 
   useEffect(() => {
     setFilteredVehicles(vehicles);

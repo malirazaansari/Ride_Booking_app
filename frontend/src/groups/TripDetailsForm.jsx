@@ -10,6 +10,11 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedMinute, setSelectedMinute] = useState("");
   const [isLaterSelected, setIsLaterSelected] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    notes: "",
+  });
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -43,14 +48,20 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
     setIsLaterSelected(timeDifference > 60);
   }, [selectedDate, selectedHour, selectedMinute]);
 
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
     <div className="bg-white shadow-lg mx-auto p-6 pb-1 rounded-lg max-w-lg">
       <ProgressTracker />
       <h2 className="mb-4 font-bold text-xl text-center">Your trip details</h2>
 
-      <InputField label="Name" placeholder="Enter your name" />
+      <InputField label="Name" placeholder="Enter your name" value={formData.name}
+        onChange={(e) => handleInputChange("name", e.target.value)}/>
       <PhoneNumberInput label="Phone Number" />
-      <InputField label="Email" type="email" placeholder="Enter your email" />
+      <InputField label="Email" type="email" placeholder="Enter your email" value={formData.email}
+        onChange={(e) => handleInputChange("email", e.target.value)}/>
 
       <AddressField
         label="Pick up Address"

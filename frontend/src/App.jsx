@@ -60,12 +60,10 @@ const App = () => {
   const calculateDistance = async () => {
     if (pickupPlace && dropoffPlace) {
       const service = new window.google.maps.DistanceMatrixService();
-      
-      // Build waypoints (including pickup, via places, and drop-off)
       const waypoints = [pickupPlace, ...viaPlaces, dropoffPlace];
-  
+
       let totalDistance = 0;
-  
+
       for (let i = 0; i < waypoints.length - 1; i++) {
         service.getDistanceMatrix(
           {
@@ -88,9 +86,10 @@ const App = () => {
           }
         );
       }
+    } else {
+      setDistance(0); // Ensure distance is reset to 0 when addresses are not selected
     }
   };
-  
 
   useEffect(() => {
     calculateDistance();
