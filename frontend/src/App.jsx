@@ -14,6 +14,19 @@ const App = () => {
   const [isWaitAndReturn, setIsWaitAndReturn] = useState(false);
   const [distance, setDistance] = useState(0);
 
+  const [tripDetails, setTripDetails] = useState({
+    name: "",
+    email: "",
+    phone: "", // Ensure phone is part of the tripDetails state
+    notes: "",
+  });
+
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [extras, setExtras] = useState({
+    meetAndGreet: false,
+    waitAndReturn: false,
+  });
+
   const handlePlaceSelected = (place, type, index = null) => {
     if (type === "pickup") {
       setPickupPlace(place);
@@ -95,6 +108,21 @@ const App = () => {
     calculateDistance();
   }, [pickupPlace, dropoffPlace,viaPlaces]);
 
+  const handleBooking = () => {
+    const bookingData = {
+      pickupPlace,
+      dropoffPlace,
+      viaPlaces,
+      isWaitAndReturn,
+      distance,
+      tripDetails, // Includes phone number
+      selectedVehicle,
+      extras,
+    };
+    console.log("Booking Data:", bookingData);
+    // Add logic to save bookingData (e.g., API call or local storage)
+  };
+
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
       <div className="relative flex h-screen">
@@ -106,11 +134,15 @@ const App = () => {
             pickupPlace={pickupPlace} 
             dropoffPlace={dropoffPlace}
             viaPlaces={viaPlaces}
+            onTripDetailsChange={setTripDetails} // Pass function to update trip details, including phone
           />
           <VehicleSelection
             onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed}
             isWaitAndReturnDisabled={isWaitAndReturnDisabled}
             distance={distance} // Pass distance to VehicleSelection
+            onBookNow={handleBooking} // Pass the handleBooking function
+            onVehicleSelect={setSelectedVehicle} // Pass function to update selected vehicle
+            onExtrasChange={setExtras} // Pass function to update extras
           />
         </div>
 

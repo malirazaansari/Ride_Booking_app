@@ -5,7 +5,7 @@ import "react-phone-input-2/lib/style.css";
 import ProgressTracker from "../components/ProgressTracker";
 import PhoneNumberInput from "../components/PhoneNumberInput";
 
-const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndReturn }) => {
+const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndReturn, onTripDetailsChange }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedMinute, setSelectedMinute] = useState("");
@@ -13,6 +13,7 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "", // Ensure phone is part of the formData state
     notes: "",
   });
 
@@ -52,6 +53,10 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  useEffect(() => {
+    onTripDetailsChange(formData); // Notify parent about changes, including phone
+  }, [formData, onTripDetailsChange]);
+
   return (
     <div className="bg-white shadow-lg mx-auto p-6 pb-1 rounded-lg max-w-lg">
       <ProgressTracker />
@@ -59,7 +64,7 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
 
       <InputField label="Name" placeholder="Enter your name" value={formData.name}
         onChange={(e) => handleInputChange("name", e.target.value)}/>
-      <PhoneNumberInput label="Phone Number" />
+      <PhoneNumberInput label="Phone Number" value={formData.phone} onChange={(phone) => handleInputChange("phone", phone)} />
       <InputField label="Email" type="email" placeholder="Enter your email" value={formData.email}
         onChange={(e) => handleInputChange("email", e.target.value)}/>
 
@@ -121,7 +126,7 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
         </select>
       </div>
 
-      <InputField label="Notes for the driver" placeholder="Any additional notes..." />
+      <InputField label="Notes for the driver" placeholder="Any additional notes..." value={formData.notes} onChange={(e) => handleInputChange("notes", e.target.value)} />
     </div>
   );
 };

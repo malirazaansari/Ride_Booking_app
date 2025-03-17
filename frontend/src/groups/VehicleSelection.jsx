@@ -14,7 +14,7 @@ const vehicleIcons = {
   "Wheelchair Accessible Cars": <FaWheelchair size={24} />,
 };
 
-const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, distance }) => {
+const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, distance, onBookNow, onVehicleSelect, onExtrasChange }) => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [modalVehicle, setModalVehicle] = useState(null);
   const [extras, setExtras] = useState({
@@ -53,6 +53,14 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
   useEffect(() => {
     setFilteredVehicles(vehicles);
   }, [vehicles]);
+
+  useEffect(() => {
+    onVehicleSelect(selectedVehicle); // Notify parent about selected vehicle
+  }, [selectedVehicle]);
+
+  useEffect(() => {
+    onExtrasChange(extras); // Notify parent about extras
+  }, [extras]);
 
   const handleWaitAndReturnChange = () => {
     setExtras((prevExtras) => ({
@@ -93,7 +101,7 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
             className={`border rounded-lg p-4 flex flex-col items-center cursor-pointer text-center w-40 shadow-md transition-all ${
               selectedVehicle === vehicle.id ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"
             }`}
-            onClick={() => setSelectedVehicle(vehicle.id)}
+            onClick={() => setSelectedVehicle(vehicle)}
           >
             {vehicleIcons[vehicle.name]}
             <p className="mt-2 font-semibold text-sm">{vehicle.name}</p>
@@ -238,7 +246,12 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
         </label>
       </div>
 
-      <button className="bg-blue-500 mt-5 py-2 rounded-lg w-full font-semibold text-white text-lg">Book Now</button>
+      <button
+        className="bg-blue-500 mt-5 py-2 rounded-lg w-full font-semibold text-white text-lg"
+        onClick={onBookNow} // Call the onBookNow function
+      >
+        Book Now
+      </button>
     </div>
   );
 };
