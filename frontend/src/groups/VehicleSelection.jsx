@@ -1,43 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Car, Bus } from "lucide-react";
 import { FaCarSide, FaShuttleVan, FaWheelchair, FaTaxi, FaInfoCircle } from "react-icons/fa";
 import VehicleFilter from "../components/VehicleFilter";
 import PaymentForm from "../components/PaymentForm";
 
 const vehicleIcons = {
-  "Any Car": <FaCarSide size={24} />, 
+  "Any Car": <FaCarSide size={24} />,
   "Saloon Car": <FaCarSide size={24} />,
-  "Estate Car": <Car size={24} />, 
-  "MPV": <FaShuttleVan size={24} />, 
-  "Executive Car": <FaTaxi size={24} />, 
-  "8 Seater Minibus": <Bus size={24} />, 
-  "Wheelchair Accessible Cars": <FaWheelchair size={24} />, 
+  "Estate Car": <Car size={24} />,
+  "MPV": <FaShuttleVan size={24} />,
+  "Executive Car": <FaTaxi size={24} />,
+  "8 Seater Minibus": <Bus size={24} />,
+  "Wheelchair Accessible Cars": <FaWheelchair size={24} />,
 };
 
-const vehicles = [
-  { id: 1, name: "Any Car", passengers: 4, luggage: 2, price: 84, eta: "11:41", description: "A standard car suitable for up to 4 passengers and 2 luggage." },
-  { id: 2, name: "Saloon Car", passengers: 4, luggage: 2, price: 84, eta: "11:41", description: "Accommodates up to 4 passengers with space for 2 suitcases and 2 hand luggage items." },
-  { id: 3, name: "Estate Car", passengers: 4, luggage: 4, price: 89, eta: "11:41", description: "Spacious estate car for extra luggage capacity." },
-  { id: 4, name: "MPV", passengers: 6, luggage: 2, price: 95, eta: "11:41", description: "Multi-purpose vehicle with more seats and comfort." },
-  { id: 5, name: "Executive Car", passengers: 4, luggage: 2, price: 129, eta: "11:41", description: "Premium car for executive travel." },
-  { id: 6, name: "8 Seater Minibus", passengers: 8, luggage: 8, price: 130, eta: "11:41", description: "Perfect for large groups with lots of luggage." },
-  { id: 7, name: "Wheelchair Accessible Cars", passengers: 5, luggage: 0, price: 132, eta: "11:41", description: "Car equipped for wheelchair access." },
-];
-
-const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled }) => {
+const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, distance }) => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [modalVehicle, setModalVehicle] = useState(null);
   const [extras, setExtras] = useState({
     meetAndGreet: false,
     waitAndReturn: false,
   });
-  const [filteredVehicles, setFilteredVehicles] = useState(vehicles);
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+
+  const calculateDynamicPrice = (basePrice, distance) => {
+    if (!distance || isNaN(distance)) {
+      console.error("Invalid distance value:", distance);
+      return basePrice;
+    }
+    return (basePrice * distance).toFixed(2);
+  };
+
+  const [vehicles, setVehicles] = useState([]);
   const [showWaitAndReturnModal, setShowWaitAndReturnModal] = useState(false);
   const [showWaitAndReturnInfoModal, setShowWaitAndReturnInfoModal] = useState(false);
+  const [filteredVehicles, setFilteredVehicles] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
+
+  useEffect(() => {
+    if (!distance || distance <= 0) {
+      setVehicles([]);
+      return;
+    }
+
+    const newVehicles = [
+      { id: 1, name: "Any Car", passengers: 4, luggage: 2, price: calculateDynamicPrice(1, distance), eta: "11:41", description: "A standard car suitable for up to 4 passengers and 2 luggage." },
+      { id: 2, name: "Saloon Car", passengers: 4, luggage: 2, price: calculateDynamicPrice(1, distance), eta: "11:41", description: "Accommodates up to 4 passengers with space for 2 suitcases and 2 hand luggage items." },
+      { id: 3, name: "Estate Car", passengers: 4, luggage: 4, price: calculateDynamicPrice(1.5, distance), eta: "11:41", description: "Spacious estate car for extra luggage capacity." },
+      { id: 4, name: "MPV", passengers: 6, luggage: 2, price: calculateDynamicPrice(1.8, distance), eta: "11:41", description: "Multi-purpose vehicle with more seats and comfort." },
+      { id: 5, name: "Executive Car", passengers: 4, luggage: 2, price: calculateDynamicPrice(2.3, distance), eta: "11:41", description: "Premium car for executive travel." },
+      { id: 6, name: "8 Seater Minibus", passengers: 8, luggage: 8, price: calculateDynamicPrice(2.5, distance), eta: "11:41", description: "Perfect for large groups with lots of luggage." },
+      { id: 7, name: "Wheelchair Accessible Cars", passengers: 5, luggage: 0, price: calculateDynamicPrice(2.6, distance), eta: "11:41", description: "Car equipped for wheelchair access." },
+    ];
+
+    setVehicles(newVehicles);
+  }, [distance]);
+
+  useEffect(() => {
+    setFilteredVehicles(vehicles);
+  }, [vehicles]);
 
   const handleWaitAndReturnChange = () => {
-    setExtras({ ...extras, waitAndReturn: !extras.waitAndReturn });
+    setExtras((prevExtras) => ({
+      ...prevExtras,
+      waitAndReturn: !prevExtras.waitAndReturn,
+    }));
     setShowWaitAndReturnModal(!extras.waitAndReturn);
   };
 
@@ -46,12 +72,14 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled })
     if (confirm) {
       onWaitAndReturnConfirmed();
     } else {
-      setExtras({ ...extras, waitAndReturn: false });
+      setExtras((prevExtras) => ({ ...prevExtras, waitAndReturn: false }));
     }
   };
 
   return (
     <div className="bg-white shadow-lg mx-auto p-6 pt-1 rounded-lg max-w-lg">
+      <p className="font-semibold text-red-600 text-lg">Distance: {distance ? distance.toFixed(2) : "0.00"} km</p>
+
       <h2 className="mb-3 font-semibold text-lg">Choose your vehicle</h2>
 
       <VehicleFilter
@@ -77,6 +105,11 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled })
             <p className="flex items-center gap-2 mt-1 text-xs">
               👤 {vehicle.passengers} | 🛄 {vehicle.luggage}
             </p>
+            {distance > 0 ? (
+              <p className="mt-1 font-bold text-sm">€{vehicle.price}</p>
+            ) : (
+              <p className="mt-1 font-bold text-gray-400 text-sm">Select places to see price</p>
+            )}
             <button
               className="mt-2 text-gray-500 hover:text-gray-700"
               onClick={(e) => {
@@ -89,6 +122,8 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled })
           </div>
         ))}
       </div>
+
+
 
       {modalVehicle && (
         <div className="top-0 left-0 z-50 fixed flex justify-center items-center bg-gray-500/50 w-screen h-screen">

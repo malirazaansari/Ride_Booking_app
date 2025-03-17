@@ -12,6 +12,7 @@ const App = () => {
   const [addViaPlace, setAddViaPlace] = useState(null);
   const [isWaitAndReturnDisabled, setIsWaitAndReturnDisabled] = useState(true);
   const [isWaitAndReturn, setIsWaitAndReturn] = useState(false);
+  const [distance, setDistance] = useState(0);
 
   const handlePlaceSelected = (place, type, index = null) => {
     if (type === "pickup") {
@@ -56,6 +57,45 @@ const App = () => {
     }
   };
 
+  const calculateDistance = async () => {
+    if (pickupPlace && dropoffPlace) {
+      const service = new window.google.maps.DistanceMatrixService();
+      
+      // Build waypoints (including pickup, via places, and drop-off)
+      const waypoints = [pickupPlace, ...viaPlaces, dropoffPlace];
+  
+      let totalDistance = 0;
+  
+      for (let i = 0; i < waypoints.length - 1; i++) {
+        service.getDistanceMatrix(
+          {
+            origins: [waypoints[i].formatted_address],
+            destinations: [waypoints[i + 1].formatted_address],
+            travelMode: "DRIVING",
+          },
+          (response, status) => {
+            if (status === "OK") {
+              const result = response.rows[0].elements[0];
+              if (result.status === "OK") {
+                totalDistance += result.distance.value / 1000;
+                setDistance(totalDistance);
+              } else {
+                console.error("Error fetching distance:", result.status);
+              }
+            } else {
+              console.error("Error calculating distance:", status);
+            }
+          }
+        );
+      }
+    }
+  };
+  
+
+  useEffect(() => {
+    calculateDistance();
+  }, [pickupPlace, dropoffPlace,viaPlaces]);
+
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
       <div className="relative flex h-screen">
@@ -68,7 +108,11 @@ const App = () => {
             dropoffPlace={dropoffPlace}
             viaPlaces={viaPlaces}
           />
-          <VehicleSelection onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed} isWaitAndReturnDisabled={isWaitAndReturnDisabled} />
+          <VehicleSelection
+            onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed}
+            isWaitAndReturnDisabled={isWaitAndReturnDisabled}
+            distance={distance} // Pass distance to VehicleSelection
+          />
         </div>
 
         <button
