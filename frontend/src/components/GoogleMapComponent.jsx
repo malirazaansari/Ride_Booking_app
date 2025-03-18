@@ -11,17 +11,23 @@ const GoogleMapComponent = ({ isVisible, pickupPlace, dropoffPlace, viaPlaces, i
 
   useEffect(() => {
     if (pickupPlace && dropoffPlace) {
-      const waypoints = viaPlaces.map((place) => ({
-        location: { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() },
-        stopover: true,
-      }));
+      const waypoints = viaPlaces
+        .filter((place) => place !== null) // Exclude null places
+        .map((place) => ({
+          location: { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() },
+          stopover: true,
+        }));
 
       const directionsService = new window.google.maps.DirectionsService();
       directionsService.route(
         {
           origin: { lat: pickupPlace.geometry.location.lat(), lng: pickupPlace.geometry.location.lng() },
-          destination: isWaitAndReturn ? { lat: pickupPlace.geometry.location.lat(), lng: pickupPlace.geometry.location.lng() } : { lat: dropoffPlace.geometry.location.lat(), lng: dropoffPlace.geometry.location.lng() },
-          waypoints: isWaitAndReturn ? [{ location: { lat: dropoffPlace.geometry.location.lat(), lng: dropoffPlace.geometry.location.lng() }, stopover: true }, ...waypoints] : waypoints,
+          destination: isWaitAndReturn
+            ? { lat: pickupPlace.geometry.location.lat(), lng: pickupPlace.geometry.location.lng() }
+            : { lat: dropoffPlace.geometry.location.lat(), lng: dropoffPlace.geometry.location.lng() },
+          waypoints: isWaitAndReturn
+            ? [{ location: { lat: dropoffPlace.geometry.location.lat(), lng: dropoffPlace.geometry.location.lng() }, stopover: true }, ...waypoints]
+            : waypoints,
           travelMode: window.google.maps.TravelMode.DRIVING,
         },
         (result, status) => {
@@ -40,9 +46,11 @@ const GoogleMapComponent = ({ isVisible, pickupPlace, dropoffPlace, viaPlaces, i
       <div className="w-full h-full">
         <GoogleMap mapContainerStyle={{ width: "100%", height: "100%" }} center={defaultCenter} zoom={10}>
           {pickupPlace && <Marker position={{ lat: pickupPlace.geometry.location.lat(), lng: pickupPlace.geometry.location.lng() }} />}
-          {viaPlaces.map((place, index) => (
-            <Marker key={index} position={{ lat: place.geometry.location.lat(), lng: place.geometry.location.lng() }} />
-          ))}
+          {viaPlaces
+            .filter((place) => place !== null) // Exclude null places
+            .map((place, index) => (
+              <Marker key={index} position={{ lat: place.geometry.location.lat(), lng: place.geometry.location.lng() }} />
+            ))}
           {dropoffPlace && <Marker position={{ lat: dropoffPlace.geometry.location.lat(), lng: dropoffPlace.geometry.location.lng() }} />}
           {directions && <DirectionsRenderer directions={directions} />}
         </GoogleMap>

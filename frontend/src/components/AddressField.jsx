@@ -16,8 +16,13 @@ const AddressField = ({ label, onPlaceSelected, addViaPlace, isWaitAndReturn, pi
   };
 
   const removeViaField = (index) => {
-    setViaFields(viaFields.filter((_, i) => i !== index));
+    const updatedViaFields = viaFields.filter((_, i) => i !== index); // Remove the field entirely
+    setViaFields(updatedViaFields);
     viaRefs.current.splice(index, 1);
+
+    if (onPlaceSelected) {
+      onPlaceSelected(null, index); // Notify parent about the removal
+    }
   };
 
   const handlePlaceSelected = (autocomplete, index = null) => {
