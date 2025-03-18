@@ -39,11 +39,15 @@ const App = () => {
     } else if (type === "via") {
       const updatedViaPlaces = [...viaPlaces];
       if (index !== null) {
-        updatedViaPlaces[index] = place;
+        if (place === null) {
+          updatedViaPlaces.splice(index, 1); // Remove the via place if null
+        } else {
+          updatedViaPlaces[index] = place; // Update the via place
+        }
       }
-      setViaPlaces(updatedViaPlaces);
+      setViaPlaces(updatedViaPlaces); // Update the state
     }
-
+  
     if (pickupPlace && dropoffPlace) {
       setIsWaitAndReturnDisabled(false);
     } else {
@@ -77,7 +81,7 @@ const App = () => {
   const calculateDistance = async () => {
     if (pickupPlace && dropoffPlace) {
       const service = new window.google.maps.DistanceMatrixService();
-      const waypoints = [pickupPlace, ...viaPlaces, dropoffPlace];
+      const waypoints = [pickupPlace, ...viaPlaces.filter((place) => place !== null), dropoffPlace]; // Filter out null values
 
       let totalDistance = 0;
 
