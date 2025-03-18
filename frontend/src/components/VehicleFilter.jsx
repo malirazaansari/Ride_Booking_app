@@ -77,7 +77,10 @@ const VehicleFilter = ({ onApply }) => {
             </button>
             <button
               className="bg-blue-500 px-4 py-1 rounded text-white"
-              onClick={() => onApply(passengers, luggage)}
+              onClick={() => {
+                onApply(passengers, luggage); // Apply the filter
+                setIsOpen(false); // Close the filter dropdown
+              }}
             >
               Apply
             </button>

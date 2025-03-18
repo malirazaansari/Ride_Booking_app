@@ -13,6 +13,10 @@ const App = () => {
   const [isWaitAndReturnDisabled, setIsWaitAndReturnDisabled] = useState(true);
   const [isWaitAndReturn, setIsWaitAndReturn] = useState(false);
   const [distance, setDistance] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [showBookingSummaryModal, setShowBookingSummaryModal] = useState(false);
+  const [bookingSummary, setBookingSummary] = useState(null);
+  const [selectedDateTime, setSelectedDateTime] = useState(null); // Add state for date and time
 
   const [tripDetails, setTripDetails] = useState({
     name: "",
@@ -109,6 +113,10 @@ const App = () => {
   }, [pickupPlace, dropoffPlace,viaPlaces]);
 
   const handleBooking = () => {
+    if (!pickupPlace || !dropoffPlace || !tripDetails.name || !tripDetails.email || !tripDetails.phone || !selectedVehicle || !paymentMethod || !selectedDateTime) {
+      alert("Please fill out all required fields, including date and time, before booking.");
+      return;
+    }
     const bookingData = {
       pickupPlace,
       dropoffPlace,
@@ -116,46 +124,99 @@ const App = () => {
       isWaitAndReturn,
       distance,
       tripDetails, 
-      selectedVehicle,
+      selectedVehicle, // This now contains the full vehicle object
       extras,
+      paymentMethod,
+      selectedDateTime, // Include date and time in booking data
     };
-    console.log("Booking Data:", bookingData);
+    setBookingSummary(bookingData);
+    setShowBookingSummaryModal(true);
   };
 
-  return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
-      <div className="relative flex h-screen">
-        <div className={`bg-gray-100 p-4 transition-all duration-300 ${isVisible ? "w-1/2" : "w-full"} overflow-y-auto`}>
-          <TripDetailsForm
-            onPlaceSelected={handlePlaceSelected}
-            addViaPlace={addViaPlace}
-            isWaitAndReturn={isWaitAndReturn}
-            pickupPlace={pickupPlace} 
-            dropoffPlace={dropoffPlace}
-            viaPlaces={viaPlaces}
-            onTripDetailsChange={setTripDetails} 
-          />
-          <VehicleSelection
-            onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed}
-            isWaitAndReturnDisabled={isWaitAndReturnDisabled}
-            distance={distance}
-            onBookNow={handleBooking}
-            onVehicleSelect={setSelectedVehicle} 
-            onExtrasChange={setExtras}
-          />
-        </div>
+  const handleBookingConfirmation = () => {
+    setShowBookingSummaryModal(false);
+    setPickupPlace(null);
+    setDropoffPlace(null);
+    setViaPlaces([]);
+    setAddViaPlace(null);
+    setIsWaitAndReturn(false);
+    setDistance(0);
+    setTripDetails({ name: "", email: "", phone: "", notes: "" });
+    setSelectedVehicle(null);
+    setExtras({ meetAndGreet: false, waitAndReturn: false });
+    setPaymentMethod(null);
+    setSelectedDateTime(null); // Reset date and time
+  };
 
-        <button
-          onClick={() => setIsVisible(!isVisible)}
-          className="top-2 right-15 z-50 fixed bg-blue-500 shadow-md px-3 py-2 rounded-md text-white"
-        >
-          {isVisible ? "Hide Map" : "Show Map"}
-        </button>
+return (
+  <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
+    <div className="relative flex h-screen">
+      <div className={`bg-gray-100 p-4 transition-all duration-300 ${isVisible ? "w-1/2 lg:w-1/2" : "w-full"} md:w-full overflow-y-auto`}>
+        <TripDetailsForm
+          onPlaceSelected={handlePlaceSelected}
+          addViaPlace={addViaPlace}
+          isWaitAndReturn={isWaitAndReturn}
+          pickupPlace={pickupPlace} 
+          dropoffPlace={dropoffPlace}
+          viaPlaces={viaPlaces}
+          onTripDetailsChange={setTripDetails} 
+          onDateTimeChange={setSelectedDateTime} // Pass handler for date and time
+        />
+        <VehicleSelection
+          onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed}
+          isWaitAndReturnDisabled={isWaitAndReturnDisabled}
+          distance={distance}
+          onBookNow={handleBooking}
+          onVehicleSelect={setSelectedVehicle} 
+          onExtrasChange={setExtras}
+          onPaymentMethodChange={setPaymentMethod}
+          selectedDateTime={selectedDateTime} // Pass selected date and time
+        />
+      </div>
 
+      <button
+        onClick={() => setIsVisible(!isVisible)}
+        className="hidden lg:block top-2 right-15 z-50 fixed bg-blue-500 shadow-md px-3 py-2 rounded-md text-white"
+      >
+        {isVisible ? "Hide Map" : "Show Map"}
+      </button>
+
+      <div className="hidden lg:block">
         <GoogleMapComponent isVisible={isVisible} pickupPlace={pickupPlace} dropoffPlace={dropoffPlace} viaPlaces={viaPlaces} isWaitAndReturn={isWaitAndReturn} />
       </div>
-    </LoadScript>
-  );
+
+      {showBookingSummaryModal && (
+        <div className="top-0 left-0 z-50 fixed flex justify-center items-center bg-gray-500/50 w-screen h-screen">
+          <div className="bg-white shadow-lg p-6 rounded-lg w-full max-w-sm text-center">
+            <h2 className="font-bold text-lg">Booking Summary</h2>
+            <p className="mt-2 text-sm">
+              <strong>Pickup Place:</strong> {bookingSummary.pickupPlace?.formatted_address || "N/A"} <br />
+              <strong>Dropoff Place:</strong> {bookingSummary.dropoffPlace?.formatted_address || "N/A"} <br />
+              <strong>Via Places:</strong> {bookingSummary.viaPlaces.map((place, idx) => (
+                <span key={idx}>{place.formatted_address}{idx < bookingSummary.viaPlaces.length - 1 ? ", " : ""}</span>
+              )) || "None"} <br />
+              <strong>Distance:</strong> {bookingSummary.distance.toFixed(2)} km <br />
+              <strong>Name:</strong> {bookingSummary.tripDetails.name} <br />
+              <strong>Email:</strong> {bookingSummary.tripDetails.email} <br />
+              <strong>Phone:</strong> {bookingSummary.tripDetails.phone} <br />
+              <strong>Notes:</strong> {bookingSummary.tripDetails.notes || "None"} <br />
+              <strong>Selected Vehicle:</strong> {bookingSummary.selectedVehicle?.name || "N/A"} <br />
+              <strong>Extras:</strong> {bookingSummary.extras.meetAndGreet ? "Meet and Greet" : "None"} {bookingSummary.extras.waitAndReturn ? ", Wait and Return" : ""} <br />
+              <strong>Payment Method:</strong> {bookingSummary.paymentMethod} <br />
+              <strong>Date and Time:</strong> {bookingSummary.selectedDateTime || "N/A"} <br />
+            </p>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 mt-4 px-6 py-2 rounded text-white"
+              onClick={handleBookingConfirmation}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  </LoadScript>
+);
 };
 
 export default App;

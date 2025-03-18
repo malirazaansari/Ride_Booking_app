@@ -5,7 +5,7 @@ import "react-phone-input-2/lib/style.css";
 import ProgressTracker from "../components/ProgressTracker";
 import PhoneNumberInput from "../components/PhoneNumberInput";
 
-const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndReturn, onTripDetailsChange }) => {
+const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndReturn, onTripDetailsChange, onDateTimeChange }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedMinute, setSelectedMinute] = useState("");
@@ -48,6 +48,11 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
     const timeDifference = (selectedDateTime - now) / (1000 * 60); 
     setIsLaterSelected(timeDifference > 60);
   }, [selectedDate, selectedHour, selectedMinute]);
+
+  useEffect(() => {
+    const selectedDateTime = `${selectedDate} ${selectedHour.toString().padStart(2, "0")}:${selectedMinute.toString().padStart(2, "0")}`;
+    onDateTimeChange(selectedDateTime); // Notify parent about the selected date and time
+  }, [selectedDate, selectedHour, selectedMinute, onDateTimeChange]);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

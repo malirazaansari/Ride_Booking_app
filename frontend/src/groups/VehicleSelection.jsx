@@ -14,7 +14,7 @@ const vehicleIcons = {
   "Wheelchair Accessible Cars": <FaWheelchair size={24} />,
 };
 
-const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, distance, onBookNow, onVehicleSelect, onExtrasChange }) => {
+const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, distance, onBookNow, onVehicleSelect, onExtrasChange, onPaymentMethodChange, selectedDateTime }) => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [modalVehicle, setModalVehicle] = useState(null);
   const [extras, setExtras] = useState({
@@ -28,6 +28,13 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
       return basePrice;
     }
     return (basePrice * distance).toFixed(2);
+  };
+
+  const calculateArrivalTime = (selectedDateTime) => {
+    if (!selectedDateTime) return null;
+    const date = new Date(selectedDateTime);
+    date.setMinutes(date.getMinutes() + 30); // Add 30 minutes to the selected time
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   const [vehicles, setVehicles] = useState([]);
@@ -51,7 +58,17 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
   }, [distance]);
 
   useEffect(() => {
-    setFilteredVehicles(vehicles);
+    if (selectedDateTime) {
+      const updatedFilteredVehicles = vehicles.map((vehicle) => ({
+        ...vehicle,
+        eta: calculateArrivalTime(selectedDateTime), // Update ETA based on selected time
+      }));
+      setFilteredVehicles(updatedFilteredVehicles); // Update filteredVehicles instead of vehicles
+    }
+  }, [selectedDateTime, vehicles]);
+
+  useEffect(() => {
+    setFilteredVehicles(vehicles); // Ensure filteredVehicles is initialized with vehicles
   }, [vehicles]);
 
   useEffect(() => {
@@ -61,6 +78,10 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
   useEffect(() => {
     onExtrasChange(extras);
   }, [extras]);
+
+  useEffect(() => {
+    onPaymentMethodChange(paymentMethod);
+  }, [paymentMethod]);
 
   const handleWaitAndReturnChange = () => {
     setExtras((prevExtras) => ({
@@ -90,7 +111,7 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
           const updatedVehicles = vehicles.filter(
             (v) => v.passengers >= passengers && v.luggage >= luggage
           );
-          setFilteredVehicles(updatedVehicles);
+          setFilteredVehicles(updatedVehicles); // Update filtered vehicles
         }}
       />
 
@@ -99,9 +120,9 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
           <div
             key={vehicle.id}
             className={`border rounded-lg p-4 flex flex-col items-center cursor-pointer text-center w-40 shadow-md transition-all ${
-              selectedVehicle === vehicle.id ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"
+              selectedVehicle?.id === vehicle.id ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"
             }`}
-            onClick={() => setSelectedVehicle(vehicle)}
+            onClick={() => setSelectedVehicle(vehicle)} // Store the full vehicle object
           >
             {vehicleIcons[vehicle.name]}
             <p className="mt-2 font-semibold text-sm">{vehicle.name}</p>
@@ -109,7 +130,10 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
               👤 {vehicle.passengers} | 🛄 {vehicle.luggage}
             </p>
             {distance > 0 ? (
-              <p className="mt-1 font-bold text-sm">€{vehicle.price}</p>
+              <>
+                <p className="mt-1 font-bold text-sm">€{vehicle.price}</p>
+                <p className="mt-1 text-gray-600 text-sm">Arrival: {vehicle.eta || "N/A"}</p>
+              </>
             ) : (
               <p className="mt-1 font-bold text-gray-400 text-sm">Select places to see price</p>
             )}
