@@ -48,18 +48,18 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
     ];
 
     setVehicles(newVehicles);
-  }, [distance]); // Always update vehicles when distance changes
+  }, [distance]);
 
   useEffect(() => {
     setFilteredVehicles(vehicles);
   }, [vehicles]);
 
   useEffect(() => {
-    onVehicleSelect(selectedVehicle); // Notify parent about selected vehicle
+    onVehicleSelect(selectedVehicle); 
   }, [selectedVehicle]);
 
   useEffect(() => {
-    onExtrasChange(extras); // Notify parent about extras
+    onExtrasChange(extras);
   }, [extras]);
 
   const handleWaitAndReturnChange = () => {
@@ -248,7 +248,7 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
 
       <button
         className="bg-blue-500 mt-5 py-2 rounded-lg w-full font-semibold text-white text-lg"
-        onClick={onBookNow} // Call the onBookNow function
+        onClick={onBookNow} 
       >
         Book Now
       </button>

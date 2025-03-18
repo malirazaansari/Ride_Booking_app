@@ -17,7 +17,7 @@ const App = () => {
   const [tripDetails, setTripDetails] = useState({
     name: "",
     email: "",
-    phone: "", // Ensure phone is part of the tripDetails state
+    phone: "", 
     notes: "",
   });
 
@@ -100,7 +100,7 @@ const App = () => {
         );
       }
     } else {
-      setDistance(0); // Ensure distance is reset to 0 when addresses are not selected
+      setDistance(0); 
     }
   };
 
@@ -115,12 +115,11 @@ const App = () => {
       viaPlaces,
       isWaitAndReturn,
       distance,
-      tripDetails, // Includes phone number
+      tripDetails, 
       selectedVehicle,
       extras,
     };
     console.log("Booking Data:", bookingData);
-    // Add logic to save bookingData (e.g., API call or local storage)
   };
 
   return (
@@ -134,15 +133,15 @@ const App = () => {
             pickupPlace={pickupPlace} 
             dropoffPlace={dropoffPlace}
             viaPlaces={viaPlaces}
-            onTripDetailsChange={setTripDetails} // Pass function to update trip details, including phone
+            onTripDetailsChange={setTripDetails} 
           />
           <VehicleSelection
             onWaitAndReturnConfirmed={handleWaitAndReturnConfirmed}
             isWaitAndReturnDisabled={isWaitAndReturnDisabled}
-            distance={distance} // Pass distance to VehicleSelection
-            onBookNow={handleBooking} // Pass the handleBooking function
-            onVehicleSelect={setSelectedVehicle} // Pass function to update selected vehicle
-            onExtrasChange={setExtras} // Pass function to update extras
+            distance={distance}
+            onBookNow={handleBooking}
+            onVehicleSelect={setSelectedVehicle} 
+            onExtrasChange={setExtras}
           />
         </div>
 

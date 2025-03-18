@@ -13,7 +13,7 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "", // Ensure phone is part of the formData state
+    phone: "",
     notes: "",
   });
 
@@ -54,7 +54,7 @@ const TripDetailsForm = ({ pickupPlace, onPlaceSelected, addViaPlace, isWaitAndR
   };
 
   useEffect(() => {
-    onTripDetailsChange(formData); // Notify parent about changes, including phone
+    onTripDetailsChange(formData);
   }, [formData, onTripDetailsChange]);
 
   return (

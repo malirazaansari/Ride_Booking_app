@@ -1,8 +1,6 @@
-// import { useState } from "react";
 import { X } from "lucide-react";
 
 const InputField = ({ label, type = "text", placeholder,value, onChange }) => {
-  // const [value, setValue] = useState("");
 
   return (
     <div className="relative mb-4">
@@ -12,8 +10,7 @@ const InputField = ({ label, type = "text", placeholder,value, onChange }) => {
           type={type}
           placeholder={placeholder}
           value={value}
-          // onChange={(e) => setValue(e.target.value)}
-          onChange={onChange} // Use the onChange passed from the parent
+          onChange={onChange}
           className="px-3 py-2 pr-10 border border-gray-500 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 w-full"
         />
         {value && (
