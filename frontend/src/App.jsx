@@ -233,6 +233,10 @@ import VehicleSelection from "./groups/VehicleSelection";
 import GoogleMapComponent from "./components/GoogleMapComponent";
 import { LoadScript } from "@react-google-maps/api";
 import BookingSummaryModal from "./components/BookingSummaryModal";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const App = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -383,6 +387,7 @@ const App = () => {
   };
 
 return (
+  <Elements stripe={stripePromise}>
   <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
     <div className="relative flex h-screen">
       <div className={`bg-gray-100 p-4 transition-all duration-300 ${isVisible ? "w-1/2 lg:w-1/2" : "w-full"} md:w-full overflow-y-auto`}>
@@ -427,6 +432,7 @@ return (
       )}
     </div>
   </LoadScript>
+  </Elements>
 );
 };
 

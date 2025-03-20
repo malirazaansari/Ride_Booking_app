@@ -282,7 +282,6 @@
 
 // export default VehicleSelection;
 
-
 import React, { useState, useEffect } from "react";
 import { Car, Bus } from "lucide-react";
 import { FaCarSide, FaShuttleVan, FaWheelchair, FaTaxi, FaInfoCircle } from "react-icons/fa";
@@ -308,6 +307,7 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
     meetAndGreet: false,
     waitAndReturn: false,
   });
+  const [isPaymentCompleted, setIsPaymentCompleted] = useState(false);
 
   const calculateDynamicPrice = (basePrice, distance) => {
     if (distance === undefined || distance === null || isNaN(distance)) {
@@ -385,6 +385,12 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
     } else {
       setExtras((prevExtras) => ({ ...prevExtras, waitAndReturn: false }));
     }
+  };
+
+  const handlePaymentSuccess = (paymentId) => {
+    console.log("Payment successful with ID:", paymentId);
+    setIsPaymentCompleted(true);
+    onBookNow(); // Proceed with booking after payment
   };
 
   return (
@@ -497,22 +503,38 @@ const VehicleSelection = ({ onWaitAndReturnConfirmed, isWaitAndReturnDisabled, d
           Pay by Cash
         </label>
 
-        <PaymentForm />
-
         <label className="flex items-center">
           <input type="radio" name="payment" value="googlepay" checked={paymentMethod === "googlepay"} onChange={(e) => setPaymentMethod(e.target.value)} className="mr-2" />
           <span className="flex items-center">
             <img src="g-pay.png" alt="Google Pay" className="mr-1 h-4" /> Google Pay
           </span>
         </label>
+
+        <label className="flex items-center">
+          <input
+            type="radio"
+            name="payment"
+            value="card"
+            checked={paymentMethod === "card"}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+            className="mr-2"
+          />
+          Pay by Card
+        </label>
+
+        {paymentMethod === "card" && !isPaymentCompleted && selectedVehicle && (
+          <PaymentForm amount={selectedVehicle.price} onPaymentSuccess={handlePaymentSuccess} />
+        )}
       </div>
 
-      <button
-        className="bg-blue-500 mt-5 py-2 rounded-lg w-full font-semibold text-white text-lg"
-        onClick={onBookNow} 
-      >
-        Book Now
-      </button>
+      {paymentMethod !== "card" || isPaymentCompleted ? (
+        <button
+          className="bg-blue-500 mt-5 py-2 rounded-lg w-full font-semibold text-white text-lg"
+          onClick={onBookNow}
+        >
+          Book Now
+        </button>
+      ) : null}
     </div>
   );
 };
